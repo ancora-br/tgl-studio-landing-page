@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TGL Studio — Impressão 3D sob medida e peças prontas</title>
+<meta name="description" content="Chaveiros, action figures, suportes e peças personalizadas impressas em 3D. Escolha do catálogo ou mande sua ideia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f8f6; --tint:#eceff2; --card:#ffffff; --text:#1d2026; --muted:#586070;
+  --line:#d6dbe2; --link:#1c58d6; --accent-text:#b93c0a; --accent:#ff6a2b; --accent-ink:#1a1206;
+  --green:#2e9e6a; --ink:#22242a;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --display:"Unbounded","Trebuchet MS",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161a; --tint:#1a1d22; --card:#22252c; --text:#e9ebee; --muted:#a3aab5;
+    --line:#2f343c; --link:#7ba6ff; --accent-text:#ff8a4f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --tint:#1a1d22; --card:#22252c; --text:#e9ebee; --muted:#a3aab5;
+  --line:#2f343c; --link:#7ba6ff; --accent-text:#ff8a4f;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{width:100%;max-width:1140px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.2;margin:0;letter-spacing:-.01em}
+p{margin:0}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;color:#eef0f3;
+  background:
+    linear-gradient(112deg,#2b3340 0,#2b3340 28%,transparent 28.1%),
+    #22242a;
+  clip-path:polygon(0 0,100% 0,100% 86%,0 100%);
+  padding-bottom:clamp(96px,14vw,190px);
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--display);font-weight:600;font-size:1.15rem}
+.brand:hover{text-decoration:none}
+.nav{display:flex;align-items:center;gap:30px}
+.nav a{color:#dfe3e8;font-size:.98rem}
+.nav a.hot{color:#ff9a63}
+.nav a.btn-line{border:1px solid rgba(255,255,255,.35);padding:8px 16px;border-radius:999px;color:#fff}
+.nav a.btn-line:hover{background:rgba(255,255,255,.1);text-decoration:none}
+.menu-btn{display:none;background:none;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-top:16px}
+.hero-art{width:100%;max-width:520px;justify-self:center}
+.hero h1{font-size:clamp(2rem,4.2vw,3.15rem);max-width:15ch}
+.hero p.lead{margin-top:20px;color:#c9cfd8;max-width:44ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:12px 24px;font:600 1rem var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn:hover{filter:brightness(1.06);text-decoration:none}
+.btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
+
+/* hero print animation */
+.layer{opacity:0;animation:lay .12s linear forwards;animation-delay:calc(var(--i) * .19s + .5s)}
+@keyframes lay{to{opacity:1}}
+#gantry{animation:rise 4.2s steps(21,end) .5s both}
+@keyframes rise{from{transform:translateY(0)}to{transform:translateY(var(--riseY,-189px))}}
+@media (prefers-reduced-motion: reduce){
+  .layer{opacity:1;animation:none}
+  #gantry{animation:none;transform:translateY(var(--riseY,-189px))}
+}
+
+/* ---------- Explore ---------- */
+.explore{position:relative;margin-top:clamp(-96px,-6vw,-32px);padding:20px 0 90px}
+.explore-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.hex{display:inline-grid;place-items:center;width:64px;height:72px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--h,#12a28f);flex:none}
+.hex svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hex.sm{width:52px;height:59px;margin-right:-10px}
+.hex.sm svg{width:22px;height:22px}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.sec-head h2{font-size:clamp(1.4rem,2.4vw,1.85rem);color:var(--accent-text)}
+.explore p.body{color:var(--muted);max-width:46ch}
+.more{display:inline-block;margin-top:20px;font-weight:600}
+.stack{position:relative;height:380px;max-width:460px;justify-self:center;width:100%}
+.pcard{position:absolute;width:200px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 18px 40px -18px rgba(20,25,35,.35)}
+.pcard .top{height:150px;display:grid;place-items:center}
+.pcard .top svg{width:110px;height:110px}
+.pcard .info{padding:14px 16px 18px}
+.pcard .info b{display:block;font-size:.98rem}
+.pcard .info span{font-size:.86rem;color:var(--muted)}
+.pcard:nth-child(1){left:0;top:70px;transform:rotate(-7deg)}
+.pcard:nth-child(2){left:110px;top:24px;transform:rotate(-1deg)}
+.pcard:nth-child(3){left:236px;top:88px;transform:rotate(6deg)}
+
+/* ---------- Band (catalog + custom + builder) ---------- */
+.band{background:var(--tint);clip-path:polygon(0 clamp(24px,5vw,72px),100% 0,100% 100%,0 100%);padding:calc(clamp(24px,5vw,72px) + 64px) 0 96px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.two > div{padding:0 48px}
+.two > div:first-child{padding-left:0;border-right:1px solid var(--line)}
+.two > div:last-child{padding-right:0}
+.hexes{display:flex;margin-bottom:22px;padding-left:10px}
+.two h2{font-size:clamp(1.3rem,2.2vw,1.7rem)}
+.two p{color:var(--muted);margin-top:14px;max-width:48ch}
+
+.builder-head{text-align:center;margin:96px auto 36px;max-width:640px}
+.builder-head .hex{margin-bottom:18px}
+.builder-head h2{font-size:clamp(1.5rem,2.6vw,2rem);color:var(--accent-text)}
+.builder-head p{margin-top:14px;color:var(--muted)}
+.editor{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:24px;max-width:960px;margin:0 auto}
+.ed{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ed-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;background:var(--tint);border-bottom:1px solid var(--line);padding:14px 16px}
+.ed-title{font-weight:600;font-size:.98rem}
+.actions{display:flex;gap:8px}
+.mini{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:6px;padding:6px 12px;font:500 .88rem var(--body);cursor:pointer}
+.mini.go{background:var(--green);border-color:var(--green);color:#fff}
+.mini.go:hover{text-decoration:none;filter:brightness(1.08)}
+.ed-body{display:grid;grid-template-columns:1fr 1fr}
+.controls{padding:20px 22px;display:grid;gap:18px;align-content:start;border-right:1px solid var(--line)}
+.preview{height:150px;border-radius:8px;background:var(--tint);border:1px dashed var(--line);display:grid;place-items:center}
+.preview svg{width:112px;height:112px;transition:transform .25s}
+@media (prefers-reduced-motion: reduce){.preview svg{transition:none}}
+.field label,.field .lbl{display:flex;justify-content:space-between;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.field output{font-family:var(--mono);font-weight:400;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=number],input[type=text],textarea{width:100%;font:inherit;font-size:.98rem;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);background:var(--c);cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}
+.sw-custom{display:grid;place-items:center;background:var(--card);border-style:dashed;font-size:15px;line-height:1;color:var(--muted)}
+#customColor{margin-top:10px}
+.summary{padding:22px 24px}
+.summary h3{font-size:1.05rem;margin-bottom:10px}
+.s-desc{color:var(--muted);margin-bottom:16px}
+.s-rows{margin:0}
+.s-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.s-row:last-child{border-bottom:0}
+.s-row dt{color:var(--muted)}
+.s-row dd{margin:0;font-weight:600;text-align:right}
+.s-row.total dd{color:var(--accent-text);font-size:1.05rem}
+.s-foot{margin-top:16px;font-size:.85rem;color:var(--muted)}
+.presets-title{font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:2px}
+.presets{display:grid;gap:8px;align-content:start}
+.presets button{display:flex;align-items:center;gap:10px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font:500 .95rem var(--body);color:var(--text);cursor:pointer}
+.presets button:hover{border-color:var(--link)}
+.presets svg{width:18px;height:18px;flex:none;stroke:var(--link);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.presets hr{border:0;border-top:1px solid var(--line);width:100%;margin:8px 0}
+.presets a{font-weight:600;padding:0 4px}
+.note{max-width:960px;margin:14px auto 0;font-size:.88rem;color:var(--muted)}
+
+/* ---------- Materiais ---------- */
+.materials{padding:84px 0 24px;text-align:center}
+.materials h2{font-size:clamp(1.4rem,2.4vw,1.85rem);color:var(--accent-text)}
+.materials .sub{color:var(--muted);max-width:56ch;margin:14px auto 40px}
+.mat-row{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left}
+.mat{padding:26px 20px}
+.mat + .mat{border-left:1px solid var(--line)}
+.mat b{display:block;font:500 1.35rem var(--display);margin-bottom:8px}
+.mat span{font-size:.92rem;color:var(--muted);display:block}
+
+/* ---------- Missão + contato ---------- */
+.mission{padding:72px 0 40px;text-align:center}
+.mission .hex{margin-bottom:16px}
+.mission h2{font-size:clamp(1.4rem,2.4vw,1.85rem);color:#c81f3a}
+:root[data-theme="dark"] .mission h2{color:#ff6b83}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .mission h2{color:#ff6b83}}
+.mission p{max-width:58ch;margin:16px auto 0;color:var(--muted)}
+.contact{max-width:600px;margin:44px auto 0;padding-top:44px;border-top:1px solid var(--line);text-align:left}
+.contact label{font-weight:600;display:block;margin-bottom:8px}
+.contact textarea{min-height:170px;font-size:.96rem;line-height:1.6;resize:vertical}
+.contact .btn{margin-top:14px}
+.contact .hint{font-size:.88rem;color:var(--muted);margin-top:10px}
+footer{border-top:1px solid var(--line);margin-top:64px;padding:26px 0 40px;font-size:.92rem;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+footer a{color:var(--text)}
+
+/* ---------- Responsivo ---------- */
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-art{order:2;max-width:420px}
+  .hero h1{max-width:none}
+  .explore-grid{grid-template-columns:1fr;gap:20px}
+  .stack{transform:scale(.9);transform-origin:top center;margin-bottom:-20px}
+  .two{grid-template-columns:1fr;gap:44px}
+  .two > div{padding:0}
+  .two > div:first-child{border-right:0;border-bottom:1px solid var(--line);padding-bottom:44px}
+  .editor{grid-template-columns:1fr}
+  .presets{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .presets hr{display:none}
+  .mat-row{grid-template-columns:1fr 1fr}
+  .mat + .mat{border-left:0}
+  .mat{border-top:1px solid var(--line)}
+  .mat:nth-child(-n+2){border-top:0}
+  .mat:nth-child(even){border-left:1px solid var(--line)}
+}
+@media (max-width:720px){
+  .menu-btn{display:inline-block}
+  .nav{display:none;position:absolute;left:24px;right:24px;top:70px;flex-direction:column;align-items:flex-start;gap:16px;background:#2b3038;border-radius:12px;padding:20px;z-index:5}
+  .nav.open{display:flex}
+  .ed-body{grid-template-columns:1fr}
+  .controls{border-right:0;border-bottom:1px solid var(--line)}
+  .stack{height:340px;transform:scale(.78)}
+}
+@media (max-width:460px){
+  .stack{transform:scale(.68);height:300px}
+  .mat-row{grid-template-columns:1fr}
+  .mat:nth-child(even){border-left:0}
+  .mat:nth-child(n+2){border-top:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="#">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><g fill="none" stroke-width="3" stroke-linecap="round"><path d="M6 24l11 6 11-6" stroke="#ff6a2b"/><path d="M6 17l11 6 11-6" stroke="#ff9a63"/><path d="M17 3l11 6-11 6-11-6z" stroke="#ffc9a8"/></g></svg>
+        TGL Studio
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a class="hot" href="#catalogo">Catálogo</a>
+        <a href="#encomenda">Sob encomenda</a>
+        <a href="#materiais">Materiais</a>
+        <a class="btn-line" href="#contato">Pedir orçamento</a>
+      </nav>
+    </div>
+
+    <div class="hero-grid">
+      <svg class="hero-art" id="heroArt" viewBox="0 0 460 380" role="img" aria-label="Uma action figure sendo impressa em 3D, camada por camada, sobre a mesa de impressão">
+        <defs>
+          <linearGradient id="bedTop" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f4f6f8"/><stop offset="1" stop-color="#d9dee5"/></linearGradient>
+        </defs>
+        <ellipse cx="230" cy="352" rx="190" ry="14" fill="rgba(0,0,0,.35)"/>
+        <rect x="56" y="30" width="12" height="290" rx="4" fill="#3b404a"/>
+        <rect x="392" y="30" width="12" height="290" rx="4" fill="#3b404a"/>
+        <g id="layers"></g>
+        <rect x="40" y="310" width="380" height="34" rx="10" fill="url(#bedTop)"/>
+        <g stroke="#c3cad3" stroke-width="1"><path d="M110 316v22M180 316v22M250 316v22M320 316v22M390 316v22"/></g>
+        <g id="gantry">
+          <rect x="52" y="262" width="356" height="12" rx="6" fill="#59606c"/>
+          <rect x="204" y="252" width="52" height="26" rx="6" fill="#7a8290"/>
+          <path d="M219 278h22l-6 22h-10z" fill="#c9cfd8"/>
+          <circle cx="230" cy="302" r="5" fill="#ff8a4f"/>
+        </g>
+      </svg>
+
+      <div>
+        <h1>Sua ideia, impressa em 3D</h1>
+        <p class="lead">Peças prontas para levar e peças sob medida: chaveiros, action figures e o que mais você conseguir imaginar.</p>
+        <div class="cta-row">
+          <a class="btn" href="#catalogo">Ver catálogo</a>
+          <a class="btn ghost" href="#montar">Montar meu pedido</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="explore" id="catalogo">
+    <div class="wrap explore-grid">
+      <div>
+        <div class="sec-head">
+          <h2>Comece pelo catálogo</h2>
+          <span class="hex" style="--h:#12a28f"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg></span>
+        </div>
+        <p class="body">Escolha entre modelos prontos de chaveiros, action figures e acessórios para casa e mesa de trabalho. Cada item mostra tamanho, material e prazo de entrega.</p>
+        <a class="more" href="#montar">Explorar modelos</a>
+      </div>
+      <div class="stack" id="stack" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="band" id="encomenda">
+    <div class="wrap">
+      <div class="two">
+        <div>
+          <div class="hexes">
+            <span class="hex sm" style="--h:#2f6fed"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h8M17 12v3"/></svg></span>
+            <span class="hex sm" style="--h:#2e9e6a"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M6 21v-6a6 6 0 0 1 12 0v6"/></svg></span>
+            <span class="hex sm" style="--h:#f08a24"><svg viewBox="0 0 24 24"><path d="M14 6l4 4M5 19l1-4L16 5l3 3L9 18z"/></svg></span>
+          </div>
+          <h2 style="color:var(--link)">Peças prontas</h2>
+          <p>Chaveiros com nomes e símbolos, action figures em vários tamanhos e peças práticas para o dia a dia. Modelos prontos para imprimir na cor e no material que você escolher.</p>
+          <a class="more" href="#montar">Escolher uma peça</a>
+        </div>
+        <div>
+          <div class="hexes">
+            <span class="hex sm" style="--h:#22242a"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span>
+            <span class="hex sm" style="--h:#ff6a2b"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/><circle cx="9" cy="8" r="2.2" fill="#fff"/><circle cx="15" cy="16" r="2.2" fill="#fff"/></svg></span>
+          </div>
+          <h2 style="color:var(--accent-text)">Sob encomenda</h2>
+          <p>Mande seu arquivo 3D ou uma referência. A gente confere o modelo, sugere tamanho e material e imprime sua peça. Serve para presentes, protótipos e reposição de peças quebradas — ou qualquer outra ideia.</p>
+          <a class="more" href="#contato">Pedir orçamento</a>
+        </div>
+      </div>
+
+      <div class="builder-head" id="montar">
+        <span class="hex" style="--h:#12a28f"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/><circle cx="9" cy="8" r="2.2" fill="#fff"/><circle cx="15" cy="16" r="2.2" fill="#fff"/></svg></span>
+        <h2>Monte seu pedido</h2>
+        <p>Diga o que você quer imprimir e ajuste tamanho, material e cor para ver uma estimativa de valor e prazo. O valor final é confirmado depois que a gente conferir o modelo.</p>
+      </div>
+
+      <div class="editor">
+        <div class="ed">
+          <div class="ed-bar">
+            <span class="ed-title">Personalize sua peça</span>
+            <div class="actions">
+              <button class="mini" id="copyBtn" type="button">Copiar resumo</button>
+              <a class="mini go" href="#contato">Pedir orçamento</a>
+            </div>
+          </div>
+          <div class="ed-body">
+            <div class="controls">
+              <div class="preview"><svg id="pv" viewBox="0 0 120 120" aria-hidden="true"></svg></div>
+              <div class="field">
+                <label for="desc">O que você quer imprimir?</label>
+                <input type="text" id="desc" placeholder="Ex.: chaveiro com meu nome, suporte de fone...">
+              </div>
+              <div class="field">
+                <label for="size">Tamanho <output id="sizeOut" for="size"></output></label>
+                <input type="range" id="size" min="2" max="30" step="1">
+              </div>
+              <div class="field">
+                <label for="mat">Material</label>
+                <select id="mat">
+                  <option>PLA</option><option>PETG</option><option>ABS</option><option>TPU</option>
+                </select>
+              </div>
+              <div class="field">
+                <span class="lbl">Cor <output id="colorOut"></output></span>
+                <div class="swatches" id="swatches"></div>
+                <input type="text" id="customColor" placeholder="Digite a cor desejada" hidden>
+              </div>
+              <div class="field">
+                <label for="qty">Quantidade</label>
+                <input type="number" id="qty" min="1" max="200" value="1" inputmode="numeric">
+              </div>
+            </div>
+            <div class="summary" id="summary" aria-live="polite">
+              <h3>Resumo do pedido</h3>
+              <p class="s-desc" id="sDesc"></p>
+              <dl class="s-rows" id="sRows"></dl>
+              <p class="s-foot">Valor e prazo são estimativas; a gente confirma tudo depois de ver o modelo.</p>
+            </div>
+          </div>
+        </div>
+        <div class="presets">
+          <span class="presets-title">Ideias para começar</span>
+          <button type="button" data-preset="0"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h8"/></svg>Chaveiro com nome</button>
+          <button type="button" data-preset="1"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3"/><path d="M6 21v-6a6 6 0 0 1 12 0v6"/></svg>Miniatura ou action figure</button>
+          <button type="button" data-preset="2"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 8l5-5 5 5"/></svg>Suporte para headphone</button>
+          <hr>
+          <a href="#contato">Enviar minha ideia</a>
+        </div>
+      </div>
+      <p class="note">Estimativa ilustrativa, calculada pelo tamanho e pela quantidade. Prazos contam a partir da aprovação do pedido.</p>
+    </div>
+  </section>
+
+  <section class="materials" id="materiais">
+    <div class="wrap">
+      <h2>Cada peça, o material certo</h2>
+      <p class="sub">Não sabe qual escolher? Diga para que a peça vai servir e a gente indica.</p>
+      <div class="mat-row">
+        <div class="mat"><b>PLA</b><span>Decoração e figures. Acabamento liso e boa variedade de cores.</span></div>
+        <div class="mat"><b>PETG</b><span>Resiste melhor à umidade. Bom para peças de uso diário.</span></div>
+        <div class="mat"><b>ABS</b><span>Aguenta mais calor. Indicado para peças técnicas.</span></div>
+        <div class="mat"><b>TPU</b><span>Flexível. Funciona para borrachas, protetores e chaveiros que dobram.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mission">
+    <div class="wrap">
+      <span class="hex" style="--h:#e0304d"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></svg></span>
+      <h2>Feito camada por camada</h2>
+      <p>Cada peça passa por revisão antes de sair. Se algo não ficou como combinado, a gente conversa e resolve.</p>
+
+      <div class="contact" id="contato">
+        <label for="msg">Conte o que você quer imprimir</label>
+        <textarea id="msg"></textarea>
+        <a class="btn" id="mailBtn" href="mailto:contato@tglstudio.com.br">Enviar por e-mail</a>
+        <p class="hint">O resumo do seu pedido já entra aqui. Você pode editar o texto e anexar seu arquivo 3D ou uma imagem de referência no e-mail.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Copyright © 2026 TGL Studio</span>
+    <nav aria-label="Rodapé">
+      <a href="#contato">Ajuda</a>
+      <a href="#">Termos</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Instagram</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ----- Menu mobile
+  var mb=document.getElementById('menuBtn'), nav=document.getElementById('nav');
+  mb.addEventListener('click',function(){
+    var open=nav.classList.toggle('open'); mb.setAttribute('aria-expanded',open);
+  });
+  nav.addEventListener('click',function(e){ if(e.target.tagName==='A'){nav.classList.remove('open');mb.setAttribute('aria-expanded','false');}});
+
+  // ----- Action figure sendo impressa (hero), perfil humanoide de baixo pra cima
+  var widths=[50,48,34,32,34,40,36,32,34,42,50,46,38,34,44,54,60,58,34,24,34,30];
+  var g=document.getElementById('layers'), out='';
+  widths.forEach(function(w,i){
+    var y=310-(i+1)*9, l=50+i*0.85;
+    out+='<rect class="layer" style="--i:'+i+'" x="'+(230-w/2)+'" y="'+y+'" width="'+w+'" height="9" rx="4" fill="hsl(18 100% '+l+'%)" stroke="rgba(0,0,0,.22)" stroke-width="1"/>';
+  });
+  g.innerHTML=out;
+  var gantry=document.getElementById('gantry');
+  gantry.style.setProperty('--riseY', (-(widths.length-1)*9)+'px');
+
+  // ----- Formas usadas nos cards ilustrativos e no pré-visualizador
+  var STROKE='stroke="rgba(110,116,128,.55)" stroke-width="1.5"';
+  function shape(type,c){
+    if(type==='chaveiro') return '<path fill="'+c+'" '+STROKE+' fill-rule="evenodd" d="M22 44a14 14 0 0 1 14-14h48a14 14 0 0 1 14 14v32a14 14 0 0 1-14 14H36a14 14 0 0 1-14-14zM45 60a7 7 0 1 0-14 0a7 7 0 1 0 14 0z"/><path d="M54 48h32M54 60h24M54 72h28" stroke="rgba(120,120,125,.55)" stroke-width="5" stroke-linecap="round" fill="none"/>';
+    if(type==='figure') return '<g fill="'+c+'" '+STROKE+'><rect x="40" y="10" width="40" height="32" rx="9"/><rect x="52" y="42" width="16" height="8"/><rect x="32" y="50" width="56" height="38" rx="9"/><rect x="15" y="52" width="13" height="32" rx="6"/><rect x="92" y="52" width="13" height="32" rx="6"/><rect x="38" y="88" width="17" height="24" rx="5"/><rect x="65" y="88" width="17" height="24" rx="5"/></g><circle cx="52" cy="26" r="4" fill="rgba(0,0,0,.4)"/><circle cx="68" cy="26" r="4" fill="rgba(0,0,0,.4)"/>';
+    if(type==='stand') return '<g fill="none" '+STROKE+' stroke-width="6" stroke-linecap="round"><path d="M60 18c-20 0-32 14-32 34"/><path d="M60 18c20 0 32 14 32 34"/><path d="M28 52v14M92 52v14"/></g><rect x="16" y="63" width="24" height="15" rx="6" fill="'+c+'" stroke="rgba(110,116,128,.55)" stroke-width="1.5"/><rect x="80" y="63" width="24" height="15" rx="6" fill="'+c+'" stroke="rgba(110,116,128,.55)" stroke-width="1.5"/><rect x="46" y="96" width="28" height="10" rx="4" fill="'+c+'" opacity=".55"/><rect x="34" y="106" width="52" height="8" rx="3" fill="rgba(110,116,128,.4)"/>';
+    return '<g fill="'+c+'" '+STROKE+' stroke-linejoin="round"><path d="M60 10 L100 38 L84 100 L36 100 L20 38 Z"/><path d="M60 10 L60 55 M20 38 L60 55 L100 38 M36 100 L60 55 L84 100" fill="none" stroke-width="1.3"/></g>';
+  }
+
+  // ----- Cards do hero da seção "Comece pelo catálogo"
+  var cards=[
+    {t:'chaveiro',c:'#2f6fed',bg:'#d7e4ff',n:'Chaveiro com nome',s:'PLA · 5 cm'},
+    {t:'figure',c:'#2e9e6a',bg:'#d3f0e1',n:'Action figure',s:'PLA · 12 cm'},
+    {t:'stand',c:'#8b5cf6',bg:'#ece1ff',n:'Suporte para headphone',s:'PETG · 18 cm'}
+  ];
+  document.getElementById('stack').innerHTML=cards.map(function(d){
+    return '<div class="pcard"><div class="top" style="background:'+d.bg+'"><svg viewBox="0 0 120 120">'+shape(d.t,d.c)+'</svg></div><div class="info"><b>'+d.n+'</b><span>'+d.s+'</span></div></div>';
+  }).join('');
+
+  // ----- Montador de pedido (sem seletor de categoria — qualquer peça)
+  var COLORS=[
+    ['Laranja','#ff6a2b'],['Azul','#2f6fed'],['Verde','#2e9e6a'],['Preto','#2a2c31'],
+    ['Branco','#f2f2ee'],['Cinza','#8d939c'],['Vermelho','#e0304d'],['Amarelo','#f5c518'],
+    ['Roxo','#8b5cf6'],['Rosa','#ec4899'],['Verde-água','#14b8a6'],['Bege','#d8c3a5']
+  ];
+  var PRESETS=[
+    {desc:'Chaveiro personalizado com meu nome',size:5,mat:'PLA',color:0,qty:1},
+    {desc:'Miniatura ou action figure',size:12,mat:'PLA',color:8,qty:1},
+    {desc:'Suporte para headphone',size:18,mat:'PETG',color:3,qty:1}
+  ];
+  var st={desc:'',size:8,mat:'PLA',color:0,customColor:'',qty:1};
+  var $=function(id){return document.getElementById(id)};
+  var descEl=$('desc'), sizeEl=$('size'), matEl=$('mat'), qtyEl=$('qty'), sw=$('swatches'), customColorEl=$('customColor');
+
+  sw.innerHTML=COLORS.map(function(c,i){return '<button type="button" class="sw" data-i="'+i+'" style="--c:'+c[1]+'" aria-label="'+c[0]+'" aria-pressed="false"></button>'}).join('')
+    +'<button type="button" class="sw sw-custom" id="customSwatchBtn" aria-label="Outra cor" aria-pressed="false">✎</button>';
+  var customBtn=$('customSwatchBtn');
+
+  // ----- Preço: tabela única por faixa de tamanho (mesma para PLA/PETG/ABS/TPU)
+  function unitPrice(size){
+    if(size<=4) return 10;
+    if(size<=6) return 12;
+    if(size<=8) return 18;
+    if(size<=10) return 25;
+    return 25 + 5*(size-10);
+  }
+  function brl(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+  function calc(){
+    var price = unitPrice(st.size) * st.qty;
+    var days = Math.ceil(3 + st.size/12 + (st.qty-1)*0.2);
+    return {price:price,days:days};
+  }
+  function pieceLabel(){ return (st.desc||'').trim() || 'sua peça'; }
+  function colorLabel(){ return st.color==='custom' ? ((st.customColor||'').trim() || 'a combinar') : COLORS[st.color][0]; }
+  function friendlyText(){
+    var r=calc();
+    var qtyTxt = st.qty>1 ? (st.qty+' unidades de ') : 'uma unidade de ';
+    return 'Pedido: '+qtyTxt+pieceLabel()+', com cerca de '+st.size+' cm, em '+st.mat+' na cor '+colorLabel().toLowerCase()+'.\n'+
+      'Prazo estimado: '+r.days+' dias úteis.\n'+
+      'Valor estimado: '+brl(r.price)+' (a confirmar depois de vermos o modelo).';
+  }
+  var userEdited=false;
+  function render(){
+    var r=calc();
+    descEl.value=st.desc;
+    sizeEl.value=st.size; $('sizeOut').textContent=st.size+' cm';
+    matEl.value=st.mat; qtyEl.value=st.qty;
+    $('colorOut').textContent=colorLabel();
+    sw.querySelectorAll('.sw').forEach(function(b){b.setAttribute('aria-pressed', b!==customBtn && +b.dataset.i===st.color)});
+    customBtn.setAttribute('aria-pressed', st.color==='custom');
+    customColorEl.hidden = st.color!=='custom';
+    customColorEl.value = st.customColor;
+
+    var pvColor = st.color==='custom' ? '#c7cdd6' : COLORS[st.color][1];
+    var pv=$('pv'); pv.innerHTML=shape('generic',pvColor);
+    pv.style.transform='scale('+(0.55+0.45*(st.size-2)/28).toFixed(2)+')';
+
+    $('sDesc').textContent='Você está pedindo '+(st.qty>1?st.qty+' unidades de ':'uma unidade de ')+pieceLabel()+'.';
+    $('sRows').innerHTML=[
+      ['Tamanho', st.size+' cm'],
+      ['Material', st.mat],
+      ['Cor', colorLabel()],
+      ['Quantidade', st.qty],
+      ['Prazo estimado', r.days+' dias úteis']
+    ].map(function(row){return '<div class="s-row"><dt>'+row[0]+'</dt><dd>'+row[1]+'</dd></div>'}).join('')
+      +'<div class="s-row total"><dt>Valor estimado</dt><dd>'+brl(r.price)+'</dd></div>';
+
+    if(!userEdited){ $('msg').value=friendlyText()+'\n\nMais detalhes (referência, prazo desejado, onde vai usar):\n'; }
+    updateMail();
+  }
+  function updateMail(){
+    $('mailBtn').href='mailto:contato@tglstudio.com.br?subject='+encodeURIComponent('Pedido de impressão 3D')+'&body='+encodeURIComponent($('msg').value);
+  }
+
+  descEl.addEventListener('input',function(){st.desc=descEl.value;render()});
+  sizeEl.addEventListener('input',function(){st.size=+sizeEl.value;render()});
+  matEl.addEventListener('change',function(){st.mat=matEl.value;render()});
+  qtyEl.addEventListener('input',function(){var v=Math.max(1,Math.min(200,parseInt(qtyEl.value,10)||1));st.qty=v;render()});
+  sw.addEventListener('click',function(e){
+    var b=e.target.closest('.sw'); if(!b) return;
+    if(b===customBtn){ st.color='custom'; render(); customColorEl.focus(); }
+    else { st.color=+b.dataset.i; render(); }
+  });
+  customColorEl.addEventListener('input',function(){st.customColor=customColorEl.value;render()});
+  document.querySelectorAll('[data-preset]').forEach(function(b){
+    b.addEventListener('click',function(){
+      st=Object.assign({customColor:''},PRESETS[+b.dataset.preset]);
+      userEdited=false; render();
+    });
+  });
+  $('msg').addEventListener('input',function(){userEdited=true;updateMail()});
+  $('copyBtn').addEventListener('click',function(){
+    var btn=this, txt=friendlyText();
+    function done(m){btn.textContent=m;setTimeout(function(){btn.textContent='Copiar resumo'},1800)}
+    try{
+      navigator.clipboard.writeText(txt).then(function(){done('Copiado')},function(){done('Não foi possível copiar')});
+    }catch(e){done('Não foi possível copiar')}
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
